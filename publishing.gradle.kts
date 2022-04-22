@@ -215,7 +215,7 @@ configure<PublishingExtension> {
         if (project.property("publish_to_maven") as String == "true") {
             create<MavenPublication>("maven") {
                 groupId = "io.github.jamalam360"
-                artifactId = porject.property("archive_base_name") as String
+                artifactId = project.property("archive_base_name") as String
 
                 if (project.properties["modVersion"] != null) {
                     version = project.properties["modVersion"] as String
