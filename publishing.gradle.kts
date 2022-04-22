@@ -180,6 +180,22 @@ configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
 }
 
 tasks {
+    named("build") {
+        doFirst {
+            println("Cleaning build/libs")
+            val libs = project.file("build/libs").listFiles().filter { it.name.endsWith(".jar") }
+            libs.forEach {
+                it.delete()
+            }
+
+            println("Cleaning build/devlibs")
+            val devLibs = project.file("build/devlibs").listFiles().filter { it.name.endsWith(".jar") }
+            devLibs.forEach {
+                it.delete()
+            }
+        }
+    }
+
     named("publish") {
         dependsOn("curseforge")
         dependsOn("githubRelease")
@@ -212,12 +228,7 @@ tasks {
 
 configure<PublishingExtension> {
     publications {
-        val publish_to_maven = if (project.hasProperty("publish_to_maven") != null) {
-            project.property("publish_to_maven") as String == "true"
-        } else {
-            false
-        }
-        if (publish_to_maven) {
+        if (project.hasProperty("publish_to_maven")) {
             create<MavenPublication>("maven") {
                 groupId = "io.github.jamalam360"
                 artifactId = project.property("archive_base_name") as String
