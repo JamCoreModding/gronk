@@ -194,6 +194,7 @@ tasks {
     }
 
     named("publish") {
+        dependsOn("build")
         dependsOn("curseforge")
         dependsOn("githubRelease")
 
