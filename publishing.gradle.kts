@@ -210,7 +210,7 @@ tasks {
     }
 }
 
-publishing {
+configure<PublishingExtension> {
     publications {
         if (project.property("publish_to_maven") as String == "true") {
             create<MavenPublication>("maven") {
