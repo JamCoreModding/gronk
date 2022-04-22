@@ -177,22 +177,6 @@ configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
 }
 
 tasks {
-    named("build") {
-        doFirst {
-            println("Cleaning build/libs")
-            val libs = project.file("build/libs").listFiles().filter { it.name.endsWith(".jar") }
-            libs.forEach {
-                it.delete()
-            }
-
-            println("Cleaning build/devlibs")
-            val devLibs = project.file("build/devlibs").listFiles().filter { it.name.endsWith(".jar") }
-            devLibs.forEach {
-                it.delete()
-            }
-        }
-    }
-
     named("publish") {
         dependsOn("curseforge")
         dependsOn("githubRelease")
