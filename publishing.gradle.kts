@@ -166,14 +166,14 @@ configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
         prerelease(false)
     }
 
-    val libs = project.file("build/libs").listFiles().filter { it.name.endsWith(".jar") }
-    val devLibs = project.file("build/devlibs").listFiles().filter { it.name.endsWith(".jar") }
+    val libsDir = project.file("build/libs")
+    val devLibsDir = project.file("build/devLibs")
 
-    if (libs.isEmpty() && devLibs.isEmpty()) {
-        println("No artifacts found")
+    if (libsDir.exists() && devLibsDir.exists()) {
+        val libs = libsDir.listFiles().filter { it.name.endsWith(".jar") }
+        val devLibs = devLibsDir.listFiles().filter { it.name.endsWith(".jar") }
+        releaseAssets(libs, devLibs)
     }
-
-    releaseAssets(libs, devLibs)
 }
 
 tasks {
