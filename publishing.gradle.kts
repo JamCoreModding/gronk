@@ -101,7 +101,6 @@ configure<com.matthewprenger.cursegradle.CurseExtension> {
 
     options(closureOf<Options> {
         forgeGradleIntegration = false
-        debug = true
     })
 }
 
@@ -175,8 +174,6 @@ configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
     }
 
     releaseAssets(libs, devLibs)
-
-    dryRun(true)
 }
 
 tasks {
