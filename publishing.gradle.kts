@@ -212,7 +212,7 @@ tasks {
 
 configure<PublishingExtension> {
     publications {
-        val publish_to_maven = if (project.hasProperty("publish_to_maven") != null) {
+        val publish_to_maven = if (project.property("publish_to_maven") != null) {
             project.property("publish_to_maven") as String == "true"
         } else {
             false
