@@ -212,7 +212,12 @@ tasks {
 
 configure<PublishingExtension> {
     publications {
-        if (project.property("publish_to_maven") as String == "true") {
+        val publish_to_maven = if (project.property("publish_to_maven") != null) {
+            project.property("publish_to_maven") as String == "true"
+        } else {
+            false
+        }
+        if (publish_to_maven) {
             create<MavenPublication>("maven") {
                 groupId = "io.github.jamalam360"
                 artifactId = project.property("archive_base_name") as String
