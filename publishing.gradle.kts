@@ -41,7 +41,7 @@ configure<com.matthewprenger.cursegradle.CurseExtension> {
             println("curseforge_project_id not found in project.properties")
         }
 
-        changelogType = "mardown"
+        changelogType = "markdown"
 
         if (project.rootProject.file("CHANGELOG.md").exists()) {
             changelog = project.rootProject.file("CHANGELOG.md")
@@ -194,7 +194,6 @@ tasks {
     }
 
     named("publish") {
-        dependsOn("build")
         dependsOn("curseforge")
         dependsOn("githubRelease")
 
