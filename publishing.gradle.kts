@@ -17,7 +17,6 @@ buildscript {
 
 apply<com.matthewprenger.cursegradle.CurseGradlePlugin>()
 apply<com.github.breadmoirai.githubreleaseplugin.GithubReleasePlugin>()
-
 apply(plugin = "maven-publish")
 
 val secrets = Properties()
@@ -208,5 +207,47 @@ tasks {
     named("githubRelease") {
         dependsOn("jar")
         dependsOn("remapJar")
+    }
+}
+
+publishing {
+    publications {
+        if (project.property("publish_to_maven") as String == "true") {
+            create<MavenPublication>("maven") {
+                groupId = "io.github.jamalam360"
+                artifactId = porject.property("archive_base_name") as String
+
+                if (project.properties["modVersion"] != null) {
+                    version = project.properties["modVersion"] as String
+                } else if (project.properties["mod_version"] != null) {
+                    version = project.properties["mod_version"] as String
+                } else {
+                    println("version not found in gradle.properties")
+                }
+
+                from(components["java"])
+            }
+        }
+    }
+
+    repositories {
+        if ((secrets["maven_username"] != null && secrets["maven_password"] != null) ||
+                (System.getenv()["MAVEN_USERNAME"] != null
+                        && System.getenv()["MAVEN_PASSWORD"] != null)
+        ) {
+        maven {
+            name = "JamalamMavenRelease"
+            url = uri("https://maven.jamalam.tech/releases")
+            credentials {
+                if (secrets["maven_username"] != null && secrets["maven_password"] != null) {
+                    username = secrets["maven_username"] as String
+                    password = secrets["maven_password"] as String
+                } else {
+                    username = System.getenv()["MAVEN_USERNAME"]!!
+                    password = System.getenv()["MAVEN_PASSWORD"]!!
+                }
+            }
+        }
+    }
     }
 }
