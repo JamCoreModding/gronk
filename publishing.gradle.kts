@@ -26,7 +26,8 @@ if (project.rootProject.file("secrets.properties").exists()) {
 }
 
 fun getProperty(name: String): String? {
-    println(project.properties[name]::class.simpleName)
+    println(project.properties[name])
+    println(project.properties[name]!!::class.simpleName)
     return project.properties[name] as String?
 }
 
