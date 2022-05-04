@@ -26,11 +26,11 @@ if (project.rootProject.file("secrets.properties").exists()) {
 }
 
 fun getProperty(name: String): String? {
-    return project.properties[name]
+    return project.properties[name] as String?
 }
 
 fun getSecret(name: String): String? {
-    return secrets[name] ?: System.getenv()[name.toUpperCase()]
+    return secrets[name] as String? ?: System.getenv()[name.toUpperCase()]
 }
 
 fun isCurseforgeEnabled(): Boolean {
