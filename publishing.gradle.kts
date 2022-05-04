@@ -50,9 +50,8 @@ if (isCurseforgeEnabled()) {
             changelogType = "markdown"
             releaseType = "release"
             changelog = project.rootProject.file("CHANGELOG.md")
-            tagName = getProperty("mod_version")!!
-            mainArtifact.displayName = getProperty("release_name")!!
             mainArtifact(tasks.get("remapJar"))
+            mainArtifact.displayName = getProperty("release_name")!!
 
             afterEvaluate {
                 uploadTask.dependsOn("remapJar")
