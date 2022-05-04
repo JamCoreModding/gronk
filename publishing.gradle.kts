@@ -26,6 +26,7 @@ if (project.rootProject.file("secrets.properties").exists()) {
 }
 
 fun getProperty(name: String): String? {
+    println(project.properties[name]::class.simpleName)
     return project.properties[name] as String?
 }
 
@@ -58,8 +59,7 @@ if (isCurseforgeEnabled()) {
             }
 
             addGameVersion("Fabric")
-            val versions = getProperty("supported_versions")!!.split(",")
-            versions.forEach {
+            getProperty("supported_versions")!!.split(",").forEach {
                 addGameVersion(it)
             }
         })
