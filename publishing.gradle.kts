@@ -75,7 +75,7 @@ if (isGithubEnabled()) {
     configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
         token(getSecret("github_token")!!)
         owner(getProperty("github_user")!!)
-        repo(getProperty("github_user")!!)
+        repo(getProperty("github_repo")!!)
         tagName(getProperty("mod_version")!!)
         releaseName(getProperty("release_name")!!)
         body(project.rootProject.file("CHANGELOG.md").readText())
