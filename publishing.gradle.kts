@@ -95,8 +95,9 @@ if (isGithubEnabled()) {
         val devLibsDir = project.file("build/devLibs")
 
         if (libsDir.exists() && devLibsDir.exists()) {
-            val libs = libsDir.listFiles().filter { it.name.endsWith(".jar") }
-            val devLibs = devLibsDir.listFiles().filter { it.name.endsWith(".jar") }
+            val archiveBaseName = getGradleProperty("archive_base_name")!!
+            val libs = libsDir.listFiles().filter { it.name.endsWith(".jar") && it.name.contains(archiveBaseName) }
+            val devLibs = devLibsDir.listFiles().filter { it.name.endsWith(".jar") && it.name.contains(archiveBaseName) }
             releaseAssets(libs, devLibs)
         }
     }
