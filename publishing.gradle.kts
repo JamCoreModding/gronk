@@ -25,42 +25,42 @@ if (project.rootProject.file("secrets.properties").exists()) {
     secrets.load(project.rootProject.file("secrets.properties").inputStream())
 }
 
-fun getProperty(name: String): String? {
-    println(project.properties[name])
-    println(project.properties[name]!!::class.simpleName)
+fun getGradleProperty(name: String): String? {
     return project.properties[name] as String?
 }
 
-fun getSecret(name: String): String? {
-    return secrets[name] as String? ?: System.getenv()[name.toUpperCase()]
+fun getGradleSecret(name: String): String? {
+    return secrets[name] as? String ?: System.getenv()[name.toUpperCase()]
 }
 
 fun isCurseforgeEnabled(): Boolean {
-    return getSecret("curseforge_api_key") != null && getProperty("curseforge_project_id") != null && getProperty("supported_versions") != null
+    return getGradleSecret("curseforge_api_key") != null && getGradleProperty("curseforge_project_id") != null && getGradleProperty("supported_versions") != null
 }
 
 fun isGithubEnabled(): Boolean {
-    return getSecret("github_token") != null && getProperty("github_repo") != null
+    return getGradleSecret("github_token") != null && getGradleProperty("github_repo") != null
 }
 
 if (isCurseforgeEnabled()) {
+    println("Enabling CurseForge publishing")
+
     configure<com.matthewprenger.cursegradle.CurseExtension> {
-        apiKey = getSecret("curseforge_api_key")!!
+        apiKey = getGradleSecret("curseforge_api_key")!!
 
         project(closureOf<CurseProject> {
-            id = getProperty("curseforge_project_id")!!
+            id = getGradleProperty("curseforge_project_id")!!
             changelogType = "markdown"
             releaseType = "release"
             changelog = project.rootProject.file("CHANGELOG.md")
             mainArtifact(tasks.get("remapJar"))
-            mainArtifact.displayName = getProperty("release_name")!!
+            mainArtifact.displayName = getGradleProperty("release_name")!!
 
             afterEvaluate {
                 uploadTask.dependsOn("remapJar")
             }
 
             addGameVersion("Fabric")
-            getProperty("supported_versions")!!.split(",").forEach {
+            getGradleProperty("supported_versions")!!.split(",").forEach {
                 addGameVersion(it)
             }
         })
@@ -69,20 +69,24 @@ if (isCurseforgeEnabled()) {
             forgeGradleIntegration = false
         })
     }
+} else {
+    println("Not enabling CurseForge publishing")
 }
 
 if (isGithubEnabled()) {
+    println("Enabling GitHub publishing")
+
     configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
-        token(getSecret("github_token")!!)
-        owner(getProperty("github_user")!!)
-        repo(getProperty("github_repo")!!)
-        tagName(getProperty("mod_version")!!)
-        releaseName(getProperty("release_name")!!)
+        token(getGradleSecret("github_token"))
+        owner(getGradleProperty("github_user"))
+        repo(getGradleProperty("github_repo"))
+        tagName(getGradleProperty("mod_version"))
+        releaseName(getGradleProperty("release_name"))
         body(project.rootProject.file("CHANGELOG.md").readText())
         prerelease(false)
 
-        if (getProperty("release_branch") != null) {
-            targetCommitish(getProperty("release_branch")!!)
+        if (getGradleProperty("release_branch") != null) {
+            targetCommitish(getGradleProperty("release_branch"))
         } else {
             targetCommitish("main")
         }
@@ -96,6 +100,8 @@ if (isGithubEnabled()) {
             releaseAssets(libs, devLibs)
         }
     }
+} else {
+    println("Not enabling GitHub publishing")
 }
 
 tasks {
@@ -139,10 +145,12 @@ tasks {
 }
 
 configure<PublishingExtension> {
-    val enableMaven = getProperty("publish_to_maven") == "true"
+    val enableMaven = getGradleProperty("publish_to_maven") == "true"
 
     publications {
         if (enableMaven) {
+            println("Enabling Maven publishing")
+
             create<MavenPublication>("maven") {
                 groupId = "io.github.jamalam360"
                 artifactId = project.property("archive_base_name") as String
@@ -155,19 +163,21 @@ configure<PublishingExtension> {
 
                 from(components["java"])
             }
+        } else {
+            println("Not enabling Maven publishing")
         }
     }
 
     repositories {
         if (enableMaven &&
-            (getSecret("maven_username") != null && getSecret("maven_password") != null)
+            (getGradleSecret("maven_username") != null && getGradleSecret("maven_password") != null)
         ) {
             maven {
                 name = "JamalamMavenRelease"
                 url = uri("https://maven.jamalam.tech/releases")
                 credentials {
-                    username = getSecret("maven_username")!!
-                    password = getSecret("maven_password")!!
+                    username = getGradleSecret("maven_username")!!
+                    password = getGradleSecret("maven_password")!!
                 }
             }
         }
