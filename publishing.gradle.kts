@@ -25,175 +25,104 @@ if (project.rootProject.file("secrets.properties").exists()) {
     secrets.load(project.rootProject.file("secrets.properties").inputStream())
 }
 
-configure<com.matthewprenger.cursegradle.CurseExtension> {
-    if (secrets["curseforge_api_key"] != null) {
-        apiKey = secrets["curseforge_api_key"] as String
-    } else if (System.getenv()["CURSEFORGE_API_KEY"] != null) {
-        apiKey = System.getenv()["CURSEFORGE_API_KEY"]
-    } else {
-        println("CURSEFORGE_API_KEY not found in secrets.properties or system environment")
-    }
+fun getProperty(name: String): String? {
+    return project.property[name]
+}
 
-    project(closureOf<CurseProject> {
-        if (project.properties["curseforge_project_id"] != null) {
-            id = project.properties["curseforge_project_id"] as String
-        } else {
-            println("curseforge_project_id not found in project.properties")
-        }
+fun getSecret(name: String): String? {
+    return secrets[name] ?: System.getenv()[name.toUpperCase()]
+}
 
-        changelogType = "markdown"
+fun isCurseforgeEnabled(): Boolean {
+    return getSecret("curseforge_api_key") != null && getProperty("curseforge_project_id") != null && getProperty("supported_versions") != null
+}
 
-        if (project.rootProject.file("CHANGELOG.md").exists()) {
-            changelog = project.rootProject.file("CHANGELOG.md")
-        } else {
-            println("No CHANGELOG.md found")
-            changelog = "No changelog provided"
-        }
+fun isGithubEnabled(): Boolean {
+    return getSecret("github_token") != null && getProperty("github_repo") != null
+}
 
-        if (project.properties["release_channel"] != null) {
-            releaseType = project.properties["release_channel"] as String
-        } else {
-            println("release_channel not found in project.properties, defaulting to 'release'")
+if (isCurseforgeEnabled()) {
+    configure<com.matthewprenger.cursegradle.CurseExtension> {
+        apiKey = getSecret("curseforge_api_key")!!
+
+        project(closureOf<CurseProject> {
+            id = getProperty("curseforge_project_id")!!
+            changelogType = "markdown"
             releaseType = "release"
-        }
+            changelog = project.rootProject.file("CHANGELOG.md")
+            tagName = getProperty("mod_version")!!
+            mainArtifact.displayName = getProperty("release_name")!!
+            mainArtifact(tasks.get("remapJar"))
 
-        val tagName: String
+            afterEvaluate {
+                uploadTask.dependsOn("remapJar")
+            }
 
-        if (project.properties["modVersion"] != null) {
-            tagName = project.properties["modVersion"] as String
-        } else if (project.properties["mod_version"] != null) {
-            tagName = project.properties["mod_version"] as String
-        } else {
-            println("version not found in gradle.properties, defaulting to project.version")
-            tagName = project.version.toString()
-        }
-
-        mainArtifact(tasks.get("remapJar"))
-
-        if (project.properties["release_name"] != null) {
-            mainArtifact.displayName = project.properties["release_name"] as String
-        } else {
-            println("release_name not found in gradle.properties, defaulting to tag name")
-            mainArtifact.displayName = "V${tagName.toUpperCase()}"
-        }
-
-
-        afterEvaluate {
-            uploadTask.dependsOn("remapJar")
-        }
-
-        addGameVersion("Fabric")
-
-        if (project.properties["supported_versions"] != null) {
-            val versions = (project.properties["supported_versions"] as String).split(",")
+            addGameVersion("Fabric")
+            val versions = getProperty("supported_versions")!!.split(",")
             versions.forEach {
                 addGameVersion(it)
             }
-        } else if (project.rootProject.file("VERSIONS.md").exists()) {
-            project.rootProject.file("VERSIONS.txt").readText().split("\r\n").forEach {
-                addGameVersion(it)
-            }
-        } else {
-            println("No versions found, defaulting to 1.18.2")
-            addGameVersion("1.18.2")
-        }
-    })
+        })
 
-    options(closureOf<Options> {
-        forgeGradleIntegration = false
-    })
+        options(closureOf<Options> {
+            forgeGradleIntegration = false
+        })
+    }
 }
 
-configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
-    if (secrets["github_token"] != null) {
-        token(secrets["github_token"] as String)
-    } else if (System.getenv()["GITHUB_TOKEN"] != null) {
-        token(System.getenv()["GITHUB_TOKEN"])
-    } else {
-        println("github_token not found in gradle.properties or system environment")
-    }
-
-    if (project.properties["github_user"] != null) {
-        owner(project.properties["github_user"] as String)
-    } else {
-        println("github_user not found in gradle.properties, defaulting to JamCoreModding")
-        owner("JamCoreModding")
-    }
-
-    if (project.properties["github_repo"] != null) {
-        repo(project.properties["github_repo"] as String)
-    } else {
-        println("github_repo not found in gradle.properties")
-    }
-
-    val tagName2: String
-
-    if (project.properties["modVersion"] != null) {
-        tagName(project.properties["modVersion"] as String)
-        tagName2 = project.properties["modVersion"] as String
-    } else if (project.properties["mod_version"] != null) {
-        tagName(project.properties["mod_version"] as String)
-        tagName2 = project.properties["mod_version"] as String
-    } else {
-        println("version not found in gradle.properties, defaulting to project.version")
-        tagName2 = project.version.toString()
-    }
-
-    if (project.properties["release_branch"] != null) {
-        targetCommitish(project.properties["release_branch"] as String)
-    } else {
-        println("release_branch not found in gradle.properties, defaulting to 'main'")
-    }
-
-    if (project.properties["release_name"] != null) {
-        releaseName(project.properties["release_name"] as String)
-    } else {
-        println("release_name not found in gradle.properties, defaulting to tag name")
-        releaseName("V${tagName2.toUpperCase()}")
-    }
-
-    if (project.rootProject.file("CHANGELOG.md").exists()) {
+if (isGithubEnabled()) {
+    configure<com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension> {
+        token(getSecret("github_token")!!)
+        owner(getProperty("github_user")!!)
+        repo(getProperty("github_user")!!)
+        tagName(getProperty("mod_version")!!)
+        releaseName(getProperty("release_name")!!)
         body(project.rootProject.file("CHANGELOG.md").readText())
-    } else {
-        println("No CHANGELOG.md found")
-        body("No changelog provided")
-    }
-
-    if (project.properties["release_channel"] != null) {
-        prerelease((project.properties["release_channel"] as String) == "release")
-    } else {
-        println("release_channel not found in project.properties, defaulting to 'release'")
         prerelease(false)
-    }
 
-    val libsDir = project.file("build/libs")
-    val devLibsDir = project.file("build/devLibs")
+        if (getProperty("release_branch") != null) {
+            targetCommitish(getProperty("release_branch")!!)
+        } else {
+            targetCommitish("main")
+        }
 
-    if (libsDir.exists() && devLibsDir.exists()) {
-        val libs = libsDir.listFiles().filter { it.name.endsWith(".jar") }
-        val devLibs = devLibsDir.listFiles().filter { it.name.endsWith(".jar") }
-        releaseAssets(libs, devLibs)
+        val libsDir = project.file("build/libs")
+        val devLibsDir = project.file("build/devLibs")
+
+        if (libsDir.exists() && devLibsDir.exists()) {
+            val libs = libsDir.listFiles().filter { it.name.endsWith(".jar") }
+            val devLibs = devLibsDir.listFiles().filter { it.name.endsWith(".jar") }
+            releaseAssets(libs, devLibs)
+        }
     }
 }
 
 tasks {
     named("publish") {
-        dependsOn("curseforge")
-        dependsOn("githubRelease")
+        if (isCurseforgeEnabled()) {
+            dependsOn("curseforge")
+        }
+
+        if (isGithubEnabled()) {
+            dependsOn("githubRelease")
+        }
 
         doLast {
-            println("Cleaning CHANGELOG.md")
             val changelog = project.rootProject.file("CHANGELOG.md")
-            println("CHANGELOG.md: \\n ${changelog.readText()}")
-            changelog.writeText("")
+            val changelogTemplate = project.rootProject.file("CHANGELOG_TEMPLATE.md")
 
-            println("Cleaning build/libs")
+            if (changelogTemplate.exists()) {
+                changelog.writeText(changelogTemplate.readText())
+            } else {
+                changelog.writeText("")
+            }
+
             val libs = project.file("build/libs").listFiles().filter { it.name.endsWith(".jar") }
             libs.forEach {
                 it.delete()
             }
 
-            println("Cleaning build/devlibs")
             val devLibs = project.file("build/devlibs").listFiles().filter { it.name.endsWith(".jar") }
             devLibs.forEach {
                 it.delete()
@@ -201,22 +130,24 @@ tasks {
         }
     }
 
-    named("githubRelease") {
-        dependsOn("jar")
-        dependsOn("remapJar")
+    if (isGithubEnabled()) {
+        named("githubRelease") {
+            dependsOn("jar")
+            dependsOn("remapJar")
+        }
     }
 }
 
 configure<PublishingExtension> {
+    val enableMaven = getProperty("publish_to_maven") == "true"
+
     publications {
-        if (project.hasProperty("publish_to_maven")) {
+        if (enableMaven) {
             create<MavenPublication>("maven") {
                 groupId = "io.github.jamalam360"
                 artifactId = project.property("archive_base_name") as String
 
-                if (project.properties["modVersion"] != null) {
-                    version = project.properties["modVersion"] as String
-                } else if (project.properties["mod_version"] != null) {
+                if (project.properties["mod_version"] != null) {
                     version = project.properties["mod_version"] as String
                 } else {
                     println("version not found in gradle.properties")
@@ -228,23 +159,17 @@ configure<PublishingExtension> {
     }
 
     repositories {
-        if ((secrets["maven_username"] != null && secrets["maven_password"] != null) ||
-                (System.getenv()["MAVEN_USERNAME"] != null
-                        && System.getenv()["MAVEN_PASSWORD"] != null)
+        if (enableMaven &&
+            (getSecret("maven_username") != null && getSecret("maven_password") != null)
         ) {
-        maven {
-            name = "JamalamMavenRelease"
-            url = uri("https://maven.jamalam.tech/releases")
-            credentials {
-                if (secrets["maven_username"] != null && secrets["maven_password"] != null) {
-                    username = secrets["maven_username"] as String
-                    password = secrets["maven_password"] as String
-                } else {
-                    username = System.getenv()["MAVEN_USERNAME"]!!
-                    password = System.getenv()["MAVEN_PASSWORD"]!!
+            maven {
+                name = "JamalamMavenRelease"
+                url = uri("https://maven.jamalam.tech/releases")
+                credentials {
+                    username = getSecret("maven_username")!!
+                    password = getSecret("maven_password")!!
                 }
             }
         }
-    }
     }
 }

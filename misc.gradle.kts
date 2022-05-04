@@ -1,10 +1,4 @@
 tasks {
-    named("build") { // Get around
-        doLast {
-
-        }
-    }
-
     named<ProcessResources>("processResources") {
         inputs.property("version", project.version)
         filesMatching("fabric.mod.json") {
