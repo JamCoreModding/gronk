@@ -107,6 +107,9 @@ if (isGithubEnabled()) {
 
 tasks {
     named("publish") {
+        dependsOn("jar")
+        dependsOn("remapJar")
+        
         if (isCurseforgeEnabled()) {
             dependsOn("curseforge")
         }
@@ -134,13 +137,6 @@ tasks {
             devLibs.forEach {
                 it.delete()
             }
-        }
-    }
-
-    if (isGithubEnabled()) {
-        named("githubRelease") {
-            dependsOn("jar")
-            dependsOn("remapJar")
         }
     }
 }
