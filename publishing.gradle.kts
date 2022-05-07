@@ -11,7 +11,7 @@ buildscript {
 
     dependencies {
         classpath("gradle.plugin.com.matthewprenger:CurseGradle:1.4.0")
-        classpath("com.github.breadmoirai:github-release:2.3.7")
+        classpath("com.github.breadmoirai:github-release:2.3.6")
     }
 }
 
