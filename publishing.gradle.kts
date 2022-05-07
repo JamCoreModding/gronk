@@ -84,11 +84,10 @@ if (isGithubEnabled()) {
         releaseName(getGradleProperty("release_name"))
         body(project.rootProject.file("CHANGELOG.md").readText())
         prerelease(false)
+	draft(true)	
 
         if (getGradleProperty("release_branch") != null) {
             targetCommitish(getGradleProperty("release_branch"))
-        } else {
-            targetCommitish("main")
         }
 
         val libsDir = project.file("build/libs")
