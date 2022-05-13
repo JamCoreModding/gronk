@@ -63,6 +63,38 @@ if (isCurseforgeEnabled()) {
             getGradleProperty("supported_versions")!!.split(",").forEach {
                 addGameVersion(it)
             }
+
+            relations {
+                if (getGradleProperty("curseforge_required_dependencies") != null) {
+                    getGradleProperty("curseforge_required_dependencies")!!.split(",").forEach {
+                        requiredDependency(it)
+                    }
+                }
+
+                if (getGradleProperty("curseforge_embedded_dependencies") != null) {
+                    getGradleProperty("curseforge_embedded_dependencies")!!.split(",").forEach {
+                        embeddedLibrary(it)
+                    }
+                }
+
+                if (getGradleProperty("curseforge_optional_dependencies") != null) {
+                    getGradleProperty("curseforge_optional_dependencies")!!.split(",").forEach {
+                        optionalDependency(it)
+                    }
+                }
+
+                if (getGradleProperty("curseforge_tool_dependencies") != null) {
+                    getGradleProperty("curseforge_tool_dependencies")!!.split(",").forEach {
+                        tool(it)
+                    }
+                }
+
+                if (getGradleProperty("curseforge_incompatible_dependencies") != null) {
+                    getGradleProperty("curseforge_incompatible_dependencies")!!.split(",").forEach {
+                        incompatible(it)
+                    }
+                }
+            }
         })
 
         options(closureOf<Options> {
