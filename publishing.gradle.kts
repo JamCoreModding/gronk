@@ -140,6 +140,7 @@ tasks {
     named("publish") {
         dependsOn("jar")
         dependsOn("remapJar")
+	dependsOn("build")
         
         if (isCurseforgeEnabled()) {
             dependsOn("curseforge")
