@@ -1,4 +1,5 @@
 import com.matthewprenger.cursegradle.CurseProject
+import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
 import java.util.*
 
@@ -64,7 +65,7 @@ if (isCurseforgeEnabled()) {
                 addGameVersion(it)
             }
 
-            relations {
+            relations(closure of<CurseRelation> {
                 if (getGradleProperty("curseforge_required_dependencies") != null) {
                     getGradleProperty("curseforge_required_dependencies")!!.split(",").forEach {
                         requiredDependency(it)
@@ -94,7 +95,7 @@ if (isCurseforgeEnabled()) {
                         incompatible(it)
                     }
                 }
-            }
+            })
         })
 
         options(closureOf<Options> {
