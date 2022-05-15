@@ -65,7 +65,7 @@ if (isCurseforgeEnabled()) {
                 addGameVersion(it)
             }
 
-            relations(closure of<CurseRelation> {
+            relations(closureOf<CurseRelation> {
                 if (getGradleProperty("curseforge_required_dependencies") != null) {
                     getGradleProperty("curseforge_required_dependencies")!!.split(",").forEach {
                         requiredDependency(it)
