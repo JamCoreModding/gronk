@@ -64,7 +64,14 @@ if (isCurseforgeEnabled()) {
             getGradleProperty("supported_versions")!!.split(",").forEach {
                 addGameVersion(it)
             }
-
+	    
+	    if (
+	        getGradleProperty("curseforge_required_dependencies") != null ||
+		getGradleProperty("curseforge_embedded_dependencies") != null ||
+		getGradleProperty("curseforge_optional_dependencies") != null ||
+		getGradleProperty("curseforge_tool_dependencies") != null ||
+		getGradleProperty("curseforge_incompatible_dependencies") != null 
+	    )
             relations(closureOf<CurseRelation> {
                 if (getGradleProperty("curseforge_required_dependencies") != null) {
                     getGradleProperty("curseforge_required_dependencies")!!.split(",").forEach {
