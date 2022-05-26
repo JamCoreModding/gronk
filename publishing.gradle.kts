@@ -61,6 +61,8 @@ if (isCurseforgeEnabled()) {
             }
 
             addGameVersion("Fabric")
+	    addGameVersion("Quilt")
+	    
             getGradleProperty("supported_versions")!!.split(",").forEach {
                 addGameVersion(it)
             }
