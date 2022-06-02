@@ -1,6 +1,7 @@
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
+import com.modrinth.minotaur.dependencies.Dependency
 import java.util.*
 
 buildscript {
@@ -12,11 +13,13 @@ buildscript {
 
     dependencies {
         classpath("gradle.plugin.com.matthewprenger:CurseGradle:1.4.0")
+        classpath("com.modrinth.minotaur:2.2.0")
         classpath("com.github.breadmoirai:github-release:2.2.12")
     }
 }
 
 apply<com.matthewprenger.cursegradle.CurseGradlePlugin>()
+apply<com.modrinth.minotaur.Minotaur>()
 apply<com.github.breadmoirai.githubreleaseplugin.GithubReleasePlugin>()
 apply(plugin = "maven-publish")
 
@@ -36,6 +39,10 @@ fun getGradleSecret(name: String): String? {
 
 fun isCurseforgeEnabled(): Boolean {
     return getGradleSecret("curseforge_api_key") != null && getGradleProperty("curseforge_project_id") != null && getGradleProperty("supported_versions") != null
+}
+
+fun isModrinthEnabled(): Boolean {
+    return getGradleSecret("modrinth_api_key") != null && getGradleProperty("modrinth_project_id") != null && getGradleProperty("supported_versions") != null
 }
 
 fun isGithubEnabled(): Boolean {
@@ -115,6 +122,46 @@ if (isCurseforgeEnabled()) {
     println("Not enabling CurseForge publishing")
 }
 
+if (isModrinthEnabled()) {
+    println("Enabling Modrinth publishing")
+
+    configure<com.modrinth.minotaur.ModrinthExtension> {
+        token = getGradleSecret("modrinth_api_key")
+        projectId = getGradleProperty("modrinth_project_id")!!.toInt()
+        uploadFile = tasks.get("remapJar")
+        gameVersions = getGradleProperty("supported_versions")!!.split(",")
+        loaders = ["fabric", "quilt"]
+        changelog = project.rootProject.file("CHANGELOG.md").text
+
+        if (
+	        getGradleProperty("modrinth_required_dependencies") != null ||
+		getGradleProperty("modrinth_optional_dependencies") != null ||
+		getGradleProperty("modrinth_incompatible_dependencies") != null 
+	    )
+            dependencies(closureOf<Dependency> {
+                if (getGradleProperty("modrinth_required_dependencies") != null) {
+                    getGradleProperty("modrinth_required_dependencies")!!.split(",").forEach {
+                        required.project(it)
+                    }
+                }
+
+                if (getGradleProperty("modrinth_optional_dependencies") != null) {
+                    getGradleProperty("modrinth_optional_dependencies")!!.split(",").forEach {
+                        optional.project(it)
+                    }
+                }
+
+                if (getGradleProperty("modrinth_incompatible_dependencies") != null) {
+                    getGradleProperty("modrinth_incompatible_dependencies")!!.split(",").forEach {
+                        incompatible.project(it)
+                    }
+                }
+            })
+    }
+} else {
+    println("Not enabling Modrinth publishing")
+}
+
 if (isGithubEnabled()) {
     println("Enabling GitHub publishing")
 
@@ -150,10 +197,14 @@ tasks {
     named("publish") {
         dependsOn("jar")
         dependsOn("remapJar")
-	dependsOn("build")
+	    dependsOn("build")
         
         if (isCurseforgeEnabled()) {
             dependsOn("curseforge")
+        }
+
+        if (isModrinthEnabled()) {
+            dependsOn("modrinth")
         }
 
         if (isGithubEnabled()) {
