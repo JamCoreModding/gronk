@@ -127,11 +127,11 @@ if (isModrinthEnabled()) {
 
     configure<com.modrinth.minotaur.ModrinthExtension> {
         token.set(getGradleSecret("modrinth_api_key"))
-        projectId.set(getGradleProperty("modrinth_project_id")!!.toInt())
+        projectId.set(getGradleProperty("modrinth_project_id")!!)
         uploadFile.set(tasks.get("remapJar"))
         gameVersions.addAll(getGradleProperty("supported_versions")!!.split(","))
         loaders.addAll(listOf("fabric", "quilt"))
-        changelog.set(project.rootProject.file("CHANGELOG.md").text)
+        changelog.set(project.rootProject.file("CHANGELOG.md").readText())
 
         if (
 	        getGradleProperty("modrinth_required_dependencies") != null ||
