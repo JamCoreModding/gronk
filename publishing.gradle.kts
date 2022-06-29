@@ -126,12 +126,12 @@ if (isModrinthEnabled()) {
     println("Enabling Modrinth publishing")
 
     configure<com.modrinth.minotaur.ModrinthExtension> {
-        token = getGradleSecret("modrinth_api_key")
-        projectId = getGradleProperty("modrinth_project_id")!!.toInt()
-        uploadFile = tasks.get("remapJar")
-        gameVersions = getGradleProperty("supported_versions")!!.split(",")
-        loaders = ["fabric", "quilt"]
-        changelog = project.rootProject.file("CHANGELOG.md").text
+        token.set(getGradleSecret("modrinth_api_key"))
+        projectId.set(getGradleProperty("modrinth_project_id")!!.toInt())
+        uploadFile.set(tasks.get("remapJar"))
+        gameVersions.addAll(getGradleProperty("supported_versions")!!.split(","))
+        loaders.addAll(listOf("fabric", "quilt"))
+        changelog.set(project.rootProject.file("CHANGELOG.md").text)
 
         if (
 	        getGradleProperty("modrinth_required_dependencies") != null ||
