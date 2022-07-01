@@ -133,7 +133,7 @@ if (isModrinthEnabled()) {
         loaders.addAll(listOf("fabric", "quilt"))
         changelog.set(project.rootProject.file("CHANGELOG.md").readText())
 	
-	syncBodyFrom = project.rootProject.file("README.md").readText()
+        syncBodyFrom.set(project.rootProject.file("README.md").readText())
 
         if (
 	        getGradleProperty("modrinth_required_dependencies") != null ||
