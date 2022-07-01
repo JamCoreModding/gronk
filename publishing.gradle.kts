@@ -132,6 +132,8 @@ if (isModrinthEnabled()) {
         gameVersions.addAll(getGradleProperty("supported_versions")!!.split(","))
         loaders.addAll(listOf("fabric", "quilt"))
         changelog.set(project.rootProject.file("CHANGELOG.md").readText())
+	
+	syncBodyFrom = project.rootProject.file("README.md").readText()
 
         if (
 	        getGradleProperty("modrinth_required_dependencies") != null ||
@@ -197,7 +199,7 @@ tasks {
     named("publish") {
         dependsOn("jar")
         dependsOn("remapJar")
-	    dependsOn("build")
+	dependsOn("build")
         
         if (isCurseforgeEnabled()) {
             dependsOn("curseforge")
@@ -210,6 +212,8 @@ tasks {
         if (isGithubEnabled()) {
             dependsOn("githubRelease")
         }
+	
+	dependsOn("modrinthSyncBody")
 
         doLast {
             val changelog = project.rootProject.file("CHANGELOG.md")
