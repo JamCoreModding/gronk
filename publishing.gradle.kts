@@ -1,7 +1,6 @@
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
-import com.modrinth.minotaur.dependencies.Dependency
 import java.util.*
 
 buildscript {
@@ -140,7 +139,7 @@ if (isModrinthEnabled()) {
 		getGradleProperty("modrinth_optional_dependencies") != null ||
 		getGradleProperty("modrinth_incompatible_dependencies") != null 
 	    )
-            dependencies(closureOf<Dependency> {
+            dependencies(closureOf<com.modrinth.minotaur.dependencies.Dependency> {
                 if (getGradleProperty("modrinth_required_dependencies") != null) {
                     getGradleProperty("modrinth_required_dependencies")!!.split(",").forEach {
                         required.project(it)
