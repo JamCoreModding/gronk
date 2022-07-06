@@ -125,6 +125,7 @@ if (isModrinthEnabled()) {
     println("Enabling Modrinth publishing")
 
     configure<com.modrinth.minotaur.ModrinthExtension> {
+	versionNumber.set(getGradleProperty("release_name")!!)
         token.set(getGradleSecret("modrinth_api_key"))
         projectId.set(getGradleProperty("modrinth_project_id")!!)
         uploadFile.set(tasks.get("remapJar"))
@@ -139,7 +140,6 @@ if (isModrinthEnabled()) {
 		getGradleProperty("modrinth_optional_dependencies") != null ||
 		getGradleProperty("modrinth_incompatible_dependencies") != null 
 	    )
-            //dependencies(closureOf<com.modrinth.minotaur.dependencies.container.DependencyDSL> {
 	    configure<com.modrinth.minotaur.dependencies.container.DependencyDSL> {
                 if (getGradleProperty("modrinth_required_dependencies") != null) {
                     getGradleProperty("modrinth_required_dependencies")!!.split(",").forEach {
