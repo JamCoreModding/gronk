@@ -140,7 +140,7 @@ if (isModrinthEnabled()) {
 		getGradleProperty("modrinth_incompatible_dependencies") != null 
 	    )
             //dependencies(closureOf<com.modrinth.minotaur.dependencies.container.DependencyDSL> {
-	    configure<<com.modrinth.minotaur.dependencies.container.DependencyDSL> {
+	    configure<com.modrinth.minotaur.dependencies.container.DependencyDSL> {
                 if (getGradleProperty("modrinth_required_dependencies") != null) {
                     getGradleProperty("modrinth_required_dependencies")!!.split(",").forEach {
                         required.project(it)
