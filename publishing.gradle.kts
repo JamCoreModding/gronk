@@ -158,7 +158,7 @@ if (isModrinthEnabled()) {
                         incompatible.project(it)
                     }
                 }
-            })
+            }
     }
 } else {
     println("Not enabling Modrinth publishing")
