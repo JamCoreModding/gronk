@@ -125,7 +125,8 @@ if (isModrinthEnabled()) {
     println("Enabling Modrinth publishing")
 
     configure<com.modrinth.minotaur.ModrinthExtension> {
-	versionNumber.set(getGradleProperty("release_name")!!)
+	versionNumber.set(getGradleProperty("mod_version")!!)
+	versionName.set(getGradleProperty("release_name")!!)
         token.set(getGradleSecret("modrinth_api_key"))
         projectId.set(getGradleProperty("modrinth_project_id")!!)
         uploadFile.set(tasks.get("remapJar"))
