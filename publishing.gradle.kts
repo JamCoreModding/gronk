@@ -62,7 +62,7 @@ if (isCurseforgeEnabled()) {
                     id = getGradleProperty("curseforge_project_id")!!
                     changelogType = "markdown"
                     releaseType =
-                            if (getGradleProperty("mod_version").contains("beta")) "beta"
+                            if (getGradleProperty("mod_version")!!.contains("beta")) "beta"
                             else "release"
                     changelog = project.rootProject.file("CHANGELOG.md")
                     mainArtifact(tasks.get("remapJar"))
@@ -146,7 +146,7 @@ if (isModrinthEnabled()) {
         versionNumber.set(getGradleProperty("mod_version")!!)
         versionName.set(getGradleProperty("release_name")!!)
         versionType.set(
-                if (getGradleProperty("mod_version").contains("beta")) "beta" else "release"
+                if (getGradleProperty("mod_version")!!.contains("beta")) "beta" else "release"
         )
         token.set(getGradleSecret("modrinth_api_key"))
         projectId.set(getGradleProperty("modrinth_project_id")!!)
@@ -194,7 +194,7 @@ if (isGithubEnabled()) {
         tagName(getGradleProperty("mod_version"))
         releaseName(getGradleProperty("release_name"))
         body(project.rootProject.file("CHANGELOG.md").readText())
-        prerelease(getGradleProperty("mod_version").contains("beta"))
+        prerelease(getGradleProperty("mod_version")!!.contains("beta"))
         draft(false)
 
         if (getGradleProperty("release_branch") != null) {
