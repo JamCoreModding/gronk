@@ -28,7 +28,7 @@ if (project.rootProject.file("secrets.properties").exists()) {
 }
 
 fun getGradleProperty(name: String): String? {
-    return project.properties[name] as String?
+    return project.properties[name]
 }
 
 fun getGradleSecret(name: String): String? {
