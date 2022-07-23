@@ -14,11 +14,8 @@ buildscript {
 }
 
 apply<com.matthewprenger.cursegradle.CurseGradlePlugin>()
-
 apply<com.modrinth.minotaur.Minotaur>()
-
 apply<com.github.breadmoirai.githubreleaseplugin.GithubReleasePlugin>()
-
 apply(plugin = "maven-publish")
 
 val secrets = Properties()
