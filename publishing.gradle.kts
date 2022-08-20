@@ -14,8 +14,11 @@ buildscript {
 }
 
 apply<com.matthewprenger.cursegradle.CurseGradlePlugin>()
+
 apply<com.modrinth.minotaur.Minotaur>()
+
 apply<com.github.breadmoirai.githubreleaseplugin.GithubReleasePlugin>()
+
 apply(plugin = "maven-publish")
 
 val secrets = Properties()
@@ -67,7 +70,6 @@ if (isCurseforgeEnabled()) {
 
                     afterEvaluate { uploadTask.dependsOn("remapJar") }
 
-                    addGameVersion("Fabric")
                     addGameVersion("Quilt")
 
                     getGradleProperty("supported_versions")!!.split(",").forEach {
@@ -149,7 +151,7 @@ if (isModrinthEnabled()) {
         projectId.set(getGradleProperty("modrinth_project_id")!!)
         uploadFile.set(tasks.get("remapJar"))
         gameVersions.addAll(getGradleProperty("supported_versions")!!.split(","))
-        loaders.addAll(listOf("fabric", "quilt"))
+        loaders.addAll(listOf("quilt"))
         changelog.set(project.rootProject.file("CHANGELOG.md").readText())
 
         syncBodyFrom.set(project.rootProject.file("README.md").readText())
