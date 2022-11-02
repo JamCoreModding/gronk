@@ -263,7 +263,7 @@ configure<PublishingExtension> {
 
     publications {
         if (enableMaven) {
-            println("Enabling Maven publishing")
+            println("Maven Publishing: ☑")
 
             create<MavenPublication>("maven") {
                 groupId = "io.github.jamalam360"
