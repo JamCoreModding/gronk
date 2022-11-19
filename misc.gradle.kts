@@ -32,7 +32,7 @@ tasks {
     
     named("build") {
 	    if (System.getProperty("NO_LICENSE_CHECK") == "1") {
-		    dependsOn.remove("checkLicenses)
+		    dependsOn.remove("checkLicenses")
 	    }
     }
 }
