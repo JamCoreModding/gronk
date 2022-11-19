@@ -29,4 +29,10 @@ tasks {
     named("remapJar") {
 	    dependsOn("optimizeOutputsOfJar")
     }
+    
+    named("build") {
+	    if (System.getProperty("NO_LICENSE_CHECK") == "1") {
+		    dependsOn.remove("checkLicenses)
+	    }
+    }
 }
