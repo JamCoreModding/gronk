@@ -234,9 +234,9 @@ tasks {
 
         if (isModrinthEnabled()) {
             dependsOn("modrinth")
+            dependsOn("modrinthSyncBody")
         }
 
-        dependsOn("modrinthSyncBody")
 
         doLast {
             val changelog = project.rootProject.file("CHANGELOG.md")
