@@ -21,10 +21,6 @@ tasks {
     withType<JavaCompile> {
         options.release.set(17)
     }
-
-    named("prepareRemapJar") {
-	    dependsOn("optimizeOutputsOfJar")
-    }
  
     named("remapJar") {
 	    dependsOn("optimizeOutputsOfJar")
