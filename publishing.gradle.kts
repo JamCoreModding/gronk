@@ -263,7 +263,7 @@ tasks {
         }
     }
     
-    if (enableMaven) {
+    if (getGradleProperty("publish_to_maven") == "true") {
         named("generateMetadataFileForMavenPublication") {
             dependsOn("optimizeOutputsOfRemapJar")
         }
