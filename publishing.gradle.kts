@@ -256,6 +256,18 @@ tasks {
             devLibs.forEach { it.delete() }
         }
     }
+    
+    if (isModrinthEnabled()) {
+        named("modrinth") {
+            dependsOn("optimizeOutputsOfRemapJar")
+        }
+    }
+    
+    if (enableMaven) {
+        named("generateMetadataFileForMavenPublication") {
+            dependsOn("optimizeOutputsOfRemapJar")
+        }
+    }
 }
 
 configure<PublishingExtension> {
