@@ -220,7 +220,6 @@ if (isGithubEnabled()) {
 
 tasks {
     named("publish") {
-        dependsOn("jar")
         dependsOn("remapJar")
         dependsOn("optimizeOutputsOfRemapJar")
 
@@ -254,6 +253,12 @@ tasks {
             val devLibs =
                     project.file("build/devlibs").listFiles().filter { it.name.endsWith(".jar") }
             devLibs.forEach { it.delete() }
+        }
+    }
+
+    if (getGradleProperty("publish_to_maven") == "true") {
+        named("generateMetadataFileForMavenPublication") {
+            dependsOn("optimizeOutputsOfRemapJar")
         }
     }
 }
