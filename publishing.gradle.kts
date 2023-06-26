@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         classpath("gradle.plugin.com.matthewprenger:CurseGradle:1.4.0")
         classpath("com.modrinth.minotaur:Minotaur:2.+")
-        classpath("com.github.breadmoirai:github-release:2.2.12")
+        classpath("com.github.breadmoirai:github-release:2.4.1")
     }
 }
 
@@ -224,7 +224,7 @@ tasks {
     named("publish") {
         dependsOn("jar")
         dependsOn("remapJar")
-        dependsOn("build")
+        dependsOn("optimizeOutputsOfRemapJar")
 
         if (isGithubEnabled()) {
             dependsOn("githubRelease")

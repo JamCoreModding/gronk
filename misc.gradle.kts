@@ -12,9 +12,11 @@ tasks {
         archiveBaseName.set(project.property("archive_base_name") as String)
     }
 
-    withType<JavaCompile> { options.release.set(17) }
-
-    named("prepareRemapJar") { dependsOn("optimizeOutputsOfJar") }
-
-    named("remapJar") { dependsOn("optimizeOutputsOfJar") }
+    withType<JavaCompile> {
+        options.release.set(17)
+    }
+ 
+    named("remapJar") {
+	    dependsOn("optimizeOutputsOfJar")
+    }
 }
