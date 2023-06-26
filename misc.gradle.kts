@@ -1,13 +1,7 @@
 tasks {
     named<ProcessResources>("processResources") {
         inputs.property("version", project.version)
-        filesMatching("fabric.mod.json") {
-            expand(
-                mutableMapOf(
-                    "version" to project.version
-                )
-            )
-        }
+        filesMatching("quilt.mod.json") { expand(mutableMapOf("version" to project.version)) }
     }
 
     named<org.gradle.jvm.tasks.Jar>("jar") {
