@@ -16,7 +16,7 @@ tasks {
         options.release.set(17)
     }
  
-    named("remapJar") {
-	    dependsOn("optimizeOutputsOfJar")
-    }
+    //named("remapJar") {
+//	    dependsOn("optimizeOutputsOfJar")
+  //  }
 }
