@@ -256,7 +256,7 @@ tasks {
         }
     }
 
-    if (getGradleProperty("publish_to_maven") == "true") {
+    if (project.tasks.findByName("generateMetadataFileForMavenPublication") && getGradleProperty("publish_to_maven") == "true") {
         named("generateMetadataFileForMavenPublication") {
             dependsOn("optimizeOutputsOfRemapJar")
         }
