@@ -261,6 +261,10 @@ tasks {
             dependsOn("optimizeOutputsOfRemapJar")
         }
     }
+
+    named("modrinth") {
+        dependsOn("optimizeOutputsOfRemapJar")
+    }
 }
 
 configure<PublishingExtension> {
